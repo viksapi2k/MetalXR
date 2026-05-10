@@ -63,18 +63,20 @@ struct InitialView: View {
     }
     
     @Sendable func checkForInstalledApp() async {
-        isInstalled = utils.runADBCommand(command: "shell pm list packages dev.peapods.MetalXR",
-                                          shouldPrintOutput: true).isEqual("package:dev.peapods.MetalXR\n")
+        isInstalled = utils.runADBCommand(command: "shell pm list packages com.PeaPodDevs.MetalXR",
+                                          shouldPrintOutput: true).isEqual("package:com.PeaPodDevs.MetalXR\n")
         print(isInstalled ? "[Installer] MetalXR is already installed on device." :
                             "[Installer] MetalXR is not installed on device.")
     }
     
+	@State private var devices = ""
+
+	let timer = Timer.publish(every: 3, on: .main, in: .common)
+		.autoconnect()
+	
     @Sendable func beginScanningForDevices() async {
-        while true {
-            isDeviceConnected = !utils.runADBCommand(command: "devices -l",
-                                                     shouldPrintOutput: false).isEqual("List of devices attached\n\n")
-            sleep(1)
-        }
+				isDeviceConnected = !utils.runADBCommand(command: "devices -l",
+														 shouldPrintOutput: true).isEqual("List of devices attached\n\n")
     }
     
     @Sendable func checkForInternetConnection() async {
@@ -88,12 +90,12 @@ struct InitialView: View {
         DispatchQueue.global(qos: .background).async {
             // Variable defining phase
             operationIsActive = true
-            let packagePath = utils.appDataFolder?.appending(path: "metalxr.apk").path()
+            let packagePath = utils.appDataFolder?.appending(path: "MetalXR.apk").path()
             let packagePathURL = URL(string: "file://" + packagePath!)
 #if DEBUG
-            let downloadURL = URL(string: "https://github.com/PeaPodDevs/MetalXRClient/releases/download/latest/dev.peapods.MetalXR.apk")
+            let downloadURL = URL(string: "https://github.com/viksapi2k/MetalXRClient/releases/download/Release/MetalXR.apk")
 #else
-            let downloadURL = URL(string: "https://github.com/PeaPodDevs/MetalXRClient/releases/download/" + utils.version + "/dev.peapods.MetalXR.apk")
+			let downloadURL = URL(string: "https://github.com/viksapi2k/MetalXRClient/releases/download/Release/MetalXR.apk")
 #endif
             
             // Download phase
