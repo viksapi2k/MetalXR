@@ -90,28 +90,57 @@ class Utilities : NSObject {
         if shouldPrintOutput { print("[ADB Command] Output of command: " + result) }
     }
     
-    func runADBCommand(command: String, shouldPrintOutput: Bool) -> String {
+//    func runADBCommand(command: String, shouldPrintOutput: Bool) -> String {
         /*
          Function for ADB-specific commands
          Working directory is in MetalXR.app/Contents/Libs/adb-lib
          Uses Android platform-tools for commands
          */
         
-        let task = Process();
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-        task.currentDirectoryURL = Bundle.main.resourceURL?.appending(path: "adb-lib")
-        task.launchPath = "/bin/bash"
-        task.arguments = ["-c", "./adb ".appending(command)]
-        task.standardInput = nil
-        try! task.run()
-        task.launch()
-        let data = pipe.fileHandleForReading
-        if shouldPrintOutput { print("[ADB Command] Ran command: '/bin/bash -c ./adb " + command + "'.") }
-        return String(data: data.readDataToEndOfFile(), encoding: .utf8)!
-    }
-    
+//        let task = Process();
+//        let pipe = Pipe()
+//        task.standardOutput = pipe
+//        task.standardError = pipe
+//        task.currentDirectoryURL = Bundle.main.resourceURL?.appending(path: "adb-lib")
+//		task.launchPath = "/bin/bash"
+//        task.arguments = ["-c", "./adb ".appending(command)]
+//        task.standardInput = nil
+//        try! task.run()
+//        task.launch()
+//        let data = pipe.fileHandleForReading
+//        if shouldPrintOutput { print("[ADB Command] Ran command: '/bin/bash -c adb " + command + "'.") }
+//		return String(data: data.readDataToEndOfFile(), encoding: .utf8)!
+//	}
+
+	func runADBCommand(command: String, shouldPrintOutput: Bool) -> String {
+		let task = Process()
+		let pipe = Pipe()
+
+		task.standardOutput = pipe
+		task.standardError = pipe
+
+		task.executableURL = URL(fileURLWithPath: "/bin/bash")
+		task.arguments = ["-c", "./adb " + command]
+
+		task.currentDirectoryURL = Bundle.main.resourceURL?.appendingPathComponent("adb-lib")
+
+		do {
+			try task.run()
+		} catch {
+			print("Process failed:", error)
+			return ""
+		}
+
+		let data = pipe.fileHandleForReading.readDataToEndOfFile()
+
+		if shouldPrintOutput {
+			print("[ADB Command] Ran:", command)
+		}
+
+		return String(data: data, encoding: .utf8) ?? ""
+	}
+	
+	
     // MARK: Generic command functions
     
     func runCommandHeadless(command: String, shouldPrintOutput: Bool, directory: String) {
