@@ -6,7 +6,7 @@
 ### Unfortunately, it DOES NOT WORK. It's just a tool with the ability to check for (and download, if necessary) MetalXRClient on the headset.
 
 ## How can I install it?
-You can download the latest disk image from our [Releases](https://github.com/viksapi2kMetalXR) page.
+You can download the latest disk image from our [Releases](https://github.com/viksapi2k/MetalXR) page.
 
 ## Credits and more info!
 This project has been created and is maintained by the following:
